@@ -1,6 +1,6 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
-import { getAllTests, createTest } from '@repo/database'
+import { getAllTests, createTest } from '@local/database'
 
 const app = new Hono()
 
@@ -14,6 +14,7 @@ app.get('/tests', async (c) => {
     const tests = await getAllTests()
     return c.json(tests)
   } catch (error) {
+    console.log('error', error)
     return c.json({ error: 'Failed to fetch tests' }, 500)
   }
 })
