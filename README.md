@@ -20,6 +20,7 @@ template-monorepo/
 - **Package Manager**: [pnpm](https://pnpm.io/) with workspaces
 - **API Server**: [Hono](https://hono.dev/) - Fast, lightweight web framework
 - **Web App**: [React](https://react.dev/) with [Vite](https://vitejs.dev/)
+- **Routing**: [React Router](https://reactrouter.com/) - Declarative routing for React
 - **Database**: [Prisma](https://www.prisma.io/) - Next-generation ORM
 
 ## 🚀 Getting Started
@@ -136,6 +137,27 @@ React application built with Vite. Features:
 - Fast development with HMR
 - TypeScript support
 - Modern React 19
+- React Router for client-side routing
+
+#### Routing Structure
+
+The web app uses React Router with the following structure:
+
+```
+src/
+├── routes.ts              # Router configuration
+├── pages/
+│   ├── Root.tsx          # Layout component with navigation
+│   ├── Home.tsx          # Home page (/)
+│   ├── About.tsx         # About page (/about)
+│   └── NotFound.tsx      # 404 page
+└── main.tsx              # App entry point
+```
+
+Available routes:
+- `/` - Home page
+- `/about` - About page
+- `/*` - 404 Not Found (catch-all)
 
 ### `packages/database`
 
