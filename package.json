@@ -1,0 +1,19 @@
+{
+  "name": "template-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:api": "pnpm --filter hono.js dev",
+    "dev:web": "pnpm --filter react-ts dev",
+    "dev:all": "pnpm --parallel --filter hono.js --filter react-ts dev",
+    "build:api": "pnpm --filter hono.js build",
+    "build:web": "pnpm --filter react-ts build",
+    "build:all": "pnpm --parallel --filter hono.js --filter react-ts build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.10.0"
+}
