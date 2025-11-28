@@ -1,8 +1,15 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import { getAllTests, createTest } from '@local/database'
 
 const app = new Hono()
+
+// Enable CORS for web app
+app.use('/*', cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}))
 
 app.get('/', (c) => {
   return c.text('Hello Hono 2!')
@@ -32,7 +39,7 @@ app.post('/tests', async (c) => {
 
 serve({
   fetch: app.fetch,
-  port: 3000
+  port: 3005
 }, (info) => {
   console.log(`Server is running on http://localhost:${info.port}`)
 })

@@ -18,6 +18,9 @@ export default function Root() {
                 <Link to="/about" style={{ color: '#646cff', textDecoration: 'none' }}>
                     About
                 </Link>
+                <Link to="/test" style={{ color: '#646cff', textDecoration: 'none' }}>
+                    Test
+                </Link>
             </nav>
 
             <main>
