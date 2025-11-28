@@ -54,7 +54,7 @@ pnpm install
 pnpm dev:api
 ```
 
-The API server will start on `http://localhost:3000` (or the port specified in your configuration).
+The API server will start on `http://localhost:3005`.
 
 ### Start Web Application
 
@@ -62,7 +62,7 @@ The API server will start on `http://localhost:3000` (or the port specified in y
 pnpm dev:web
 ```
 
-The web application will start on `http://localhost:5173` (default Vite port).
+The web application will start on `http://localhost:3000`.
 
 ### Start Both Applications
 
@@ -71,6 +71,49 @@ Run both the API and web app concurrently:
 ```bash
 pnpm dev:all
 ```
+
+### Port Configuration
+
+The default ports are:
+- **API Server**: `3005`
+- **Web Application**: `3000`
+
+#### Customizing Ports
+
+**API Server Port:**
+
+Edit `apps/api/src/index.ts`:
+
+```typescript
+serve({
+  fetch: app.fetch,
+  port: 3005  // Change this to your desired port
+}, (info) => {
+  console.log(`Server is running on http://localhost:${info.port}`)
+})
+```
+
+**Web Application Port:**
+
+Edit `apps/web/vite.config.ts`:
+
+```typescript
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,  // Change this to your desired port
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3005',  // Update if API port changes
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
+})
+```
+
+> **Note**: If you change the API port, make sure to update the proxy target in `vite.config.ts` and the CORS origin in `apps/api/src/index.ts`.
 
 ## 🏗️ Building for Production
 

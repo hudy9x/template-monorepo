@@ -1,7 +1,7 @@
 import { Outlet, Link } from 'react-router';
 import '../App.css';
 
-export default function Root() {
+export default function Layout() {
     return (
         <div className="app">
             <nav style={{

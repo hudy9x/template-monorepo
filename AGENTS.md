@@ -35,6 +35,13 @@
 - Build api: `pnpm --filter api build` or `pnpm run build:api`
 - Prisma DB tasks: `pnpm --filter @local/database run db:migrate` etc.
 
+**Port Configuration**
+- API server runs on port `3005` (configured in `apps/api/src/index.ts`)
+- Web dev server runs on port `3000` (configured in `apps/web/vite.config.ts`)
+- Web app proxies `/api/*` requests to `http://localhost:3005`
+- To change ports: update both the server port AND the proxy target in vite.config.ts
+- To change CORS: update the origin in `apps/api/src/index.ts` CORS middleware
+
 **Tests / Single test**
 - No global test runner configured. Common patterns to run a single test if added:
 - With workspace script: `pnpm --filter <pkg> test -- <matcher-or-path>`
