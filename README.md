@@ -2,6 +2,26 @@
 
 A modern monorepo template using **pnpm workspaces** for efficient package management and code sharing.
 
+## 📋 Table of Contents
+
+- [📦 Project Structure](#-project-structure)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🚀 Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Environment Variables Setup](#environment-variables-setup)
+- [🏃 Running the Applications](#-running-the-applications)
+  - [Port Configuration](#port-configuration)
+  - [API Proxy Configuration](#api-proxy-configuration)
+- [🏗️ Building for Production](#️-building-for-production)
+- [📚 Prisma Database Setup](#-prisma-database-setup)
+- [📁 Package Details](#-package-details)
+- [🌊 Streaming with Readable Streams](#-streaming-with-readable-streams)
+- [🎨 UI Components with shadcn/ui](#-ui-components-with-shadcnui)
+- [🔐 Authentication with Better Auth](#-authentication-with-better-auth)
+- [🔗 Workspace Dependencies](#-workspace-dependencies)
+- [📝 License](#-license)
+
 ## 📦 Project Structure
 
 This monorepo contains the following packages:
@@ -131,94 +151,35 @@ pnpm dev:all
 ### Port Configuration
 
 The default ports are:
-- **API Server**: `3005`
-- **Web Application**: `3000`
+- **API Server**: `3005` (configured in `apps/api/src/index.ts`)
+- **Web Application**: `3000` (configured in `apps/web/vite.config.ts`)
 
-#### Customizing Ports
-
-**API Server Port:**
-
-Edit `apps/api/src/index.ts`:
-
-```typescript
-serve({
-  fetch: app.fetch,
-  port: 3005  // Change this to your desired port
-}, (info) => {
-  console.log(`Server is running on http://localhost:${info.port}`)
-})
-```
-
-**Web Application Port:**
-
-Edit `apps/web/vite.config.ts`:
-
-```typescript
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    port: 3000,  // Change this to your desired port
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3005',  // Update if API port changes
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
-  },
-})
-```
-
->
-> **Note**: If you change the API port, make sure to update the proxy target in `vite.config.ts` and the CORS origin in `apps/api/src/index.ts`.
+> [!NOTE]
+> If you change the API port, make sure to update the proxy target in `vite.config.ts` and the CORS origin in `apps/api/src/index.ts`.
 
 ### API Proxy Configuration
 
-The web application uses Vite's proxy feature to forward API requests to the backend server. This avoids CORS issues during development.
+The web application uses Vite's proxy to forward `/api/*` requests to the backend server, avoiding CORS issues during development.
 
-**How it works:**
-
-When the web app makes a request to `/api/tests`, Vite automatically:
-1. Intercepts the request
-2. Rewrites the path from `/api/tests` to `/tests`
-3. Forwards it to `http://localhost:3005/tests`
-4. Returns the response to the web app
+**Example:** Request to `/api/tests` → forwarded to → `http://localhost:3005/tests`
 
 **Configuration in `apps/web/vite.config.ts`:**
 
 ```typescript
-proxy: {
-  '/api': {                              // Match requests starting with /api
-    target: 'http://localhost:3005',     // Forward to API server
-    changeOrigin: true,                  // Change the origin header
-    rewrite: (path) => path.replace(/^\/api/, ''),  // Remove /api prefix
+server: {
+  proxy: {
+    '/api': {
+      target: 'http://localhost:3005',
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/api/, ''),
+    },
   },
 }
 ```
 
-**Usage in frontend code:**
-
+**Usage in frontend:**
 ```typescript
-// This request goes to http://localhost:3005/tests
 const response = await fetch('/api/tests');
-```
-
-**Adding more proxy rules:**
-
-You can add multiple proxy configurations for different endpoints:
-
-```typescript
-proxy: {
-  '/api': {
-    target: 'http://localhost:3005',
-    changeOrigin: true,
-    rewrite: (path) => path.replace(/^\/api/, ''),
-  },
-  '/auth': {
-    target: 'http://localhost:3006',
-    changeOrigin: true,
-  },
-}
 ```
 
 ## 🏗️ Building for Production
@@ -314,6 +275,175 @@ Shared Prisma database package. Features:
 - Centralized database schema
 - Shared Prisma client
 - Type-safe database queries
+
+## 🌊 Streaming with Readable Streams
+
+This monorepo uses **Readable Streams** for streaming data from backend to frontend. Readable Streams are simpler than WebSockets for one-way data flow and work over standard HTTP/HTTPS.
+
+**Use cases:**
+- AI/LLM responses
+- Large file downloads
+- Real-time logs
+- Progress updates
+
+📖 **[Read the full Streaming Guide →](./docs/streaming-with-readable-streams.md)**
+
+## 🎨 UI Components with shadcn/ui
+
+This monorepo recommends using [shadcn/ui](https://ui.shadcn.com/) for building beautiful, accessible UI components.
+
+### What is shadcn/ui?
+
+shadcn/ui is **not a component library**. It's a collection of re-usable components that you can copy and paste into your apps. Built on top of:
+- **Radix UI** - Unstyled, accessible components
+- **Tailwind CSS** - Utility-first CSS framework
+
+### Installation
+
+**1. Install Tailwind CSS** (if not already installed)
+
+```bash
+cd apps/web
+pnpm add -D tailwindcss postcss autoprefixer
+pnpm dlx tailwindcss init -p
+```
+
+**2. Configure Tailwind**
+
+Edit `apps/web/tailwind.config.js`:
+
+```javascript
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: ["class"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+**3. Add Tailwind directives**
+
+Edit `apps/web/src/index.css`:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+**4. Initialize shadcn/ui**
+
+```bash
+cd apps/web
+pnpm dlx shadcn@latest init
+```
+
+Follow the prompts:
+- **TypeScript**: Yes
+- **Style**: Default (or your preference)
+- **Base color**: Slate (or your preference)
+- **CSS variables**: Yes
+- **Components location**: `./src/components`
+- **Utils location**: `./src/lib/utils`
+
+### Adding Components
+
+Add components as needed:
+
+```bash
+cd apps/web
+
+# Add a button component
+pnpm dlx shadcn@latest add button
+
+# Add a card component
+pnpm dlx shadcn@latest add card
+
+# Add a form component
+pnpm dlx shadcn@latest add form
+
+# Add multiple components at once
+pnpm dlx shadcn@latest add button card dialog dropdown-menu
+```
+
+### Using Components
+
+```typescript
+// apps/web/src/pages/Example.tsx
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+export default function Example() {
+  return (
+    <div className="p-8">
+      <Card className="w-96">
+        <CardHeader>
+          <CardTitle>Welcome</CardTitle>
+          <CardDescription>This is a shadcn/ui card</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={() => alert('Hello!')}>
+            Click me
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+```
+
+### Path Alias Configuration
+
+Ensure `@` alias is configured in `apps/web/tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+And in `apps/web/vite.config.ts`:
+
+```typescript
+import path from "path";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+});
+```
+
+> [!TIP]
+> Browse all available components at [ui.shadcn.com/docs/components](https://ui.shadcn.com/docs/components)
+
+## 🔐 Authentication with Better Auth
+
+This monorepo uses [Better Auth](https://www.better-auth.com/) with **bearer token authentication** for API security. Bearer tokens are stateless, mobile-friendly, and perfect for API-first applications.
+
+**Key features:**
+- Email/password authentication
+- Social OAuth providers (GitHub, Google, etc.)
+- Type-safe with full TypeScript support
+- Multiple authentication strategies
+
+📖 **[Read the full Authentication Guide →](./docs/authentication-with-better-auth.md)**
 
 ## 🔗 Workspace Dependencies
 
