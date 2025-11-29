@@ -4,12 +4,16 @@ export default function ErrorBoundary() {
   const error = useRouteError();
 
   if (isRouteErrorResponse(error)) {
+    // Type assertion needed because TypeScript doesn't narrow the type properly
+    const routeError = error as { status: number; statusText: string; data: unknown };
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
         <h1 style={{ color: '#ff6b6b' }}>
-          {error.status} {error.statusText}
+          {routeError.status} {routeError.statusText}
         </h1>
-        <p style={{ marginTop: '1rem', color: '#aaa' }}>{error.data}</p>
+        <p style={{ marginTop: '1rem', color: '#aaa' }}>
+          {typeof routeError.data === 'string' ? routeError.data : JSON.stringify(routeError.data)}
+        </p>
         <Link
           to="/"
           style={{

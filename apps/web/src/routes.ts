@@ -1,4 +1,4 @@
-import { createBrowserRouter, redirect } from 'react-router';
+import { createBrowserRouter, redirect, type ActionFunctionArgs } from 'react-router';
 import Layout from './pages/Layout.tsx';
 import Home from './pages/Home.tsx';
 import About from './pages/About.tsx';
@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
                 },
                 // Action: Handle form submissions to create new test entries
                 // This runs when a form is submitted to /test and redirects back after success
-                action: async ({ request }) => {
+                action: async ({ request }: ActionFunctionArgs) => {
                     const formData = await request.json();
                     const response = await fetch('/api/tests', {
                         method: 'POST',

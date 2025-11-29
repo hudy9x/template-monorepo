@@ -39,8 +39,12 @@
 - API server runs on port `3005` (configured in `apps/api/src/index.ts`)
 - Web dev server runs on port `3000` (configured in `apps/web/vite.config.ts`)
 - Web app proxies `/api/*` requests to `http://localhost:3005`
+  - Proxy config in `apps/web/vite.config.ts` under `server.proxy`
+  - Requests to `/api/tests` are rewritten to `/tests` and forwarded to API server
+  - The `rewrite` function removes the `/api` prefix before forwarding
 - To change ports: update both the server port AND the proxy target in vite.config.ts
 - To change CORS: update the origin in `apps/api/src/index.ts` CORS middleware
+- To add more proxy rules: add additional entries in the `proxy` object with different path patterns
 
 **Tests / Single test**
 - No global test runner configured. Common patterns to run a single test if added:

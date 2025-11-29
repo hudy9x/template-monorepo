@@ -113,7 +113,57 @@ export default defineConfig({
 })
 ```
 
+>
 > **Note**: If you change the API port, make sure to update the proxy target in `vite.config.ts` and the CORS origin in `apps/api/src/index.ts`.
+
+### API Proxy Configuration
+
+The web application uses Vite's proxy feature to forward API requests to the backend server. This avoids CORS issues during development.
+
+**How it works:**
+
+When the web app makes a request to `/api/tests`, Vite automatically:
+1. Intercepts the request
+2. Rewrites the path from `/api/tests` to `/tests`
+3. Forwards it to `http://localhost:3005/tests`
+4. Returns the response to the web app
+
+**Configuration in `apps/web/vite.config.ts`:**
+
+```typescript
+proxy: {
+  '/api': {                              // Match requests starting with /api
+    target: 'http://localhost:3005',     // Forward to API server
+    changeOrigin: true,                  // Change the origin header
+    rewrite: (path) => path.replace(/^\/api/, ''),  // Remove /api prefix
+  },
+}
+```
+
+**Usage in frontend code:**
+
+```typescript
+// This request goes to http://localhost:3005/tests
+const response = await fetch('/api/tests');
+```
+
+**Adding more proxy rules:**
+
+You can add multiple proxy configurations for different endpoints:
+
+```typescript
+proxy: {
+  '/api': {
+    target: 'http://localhost:3005',
+    changeOrigin: true,
+    rewrite: (path) => path.replace(/^\/api/, ''),
+  },
+  '/auth': {
+    target: 'http://localhost:3006',
+    changeOrigin: true,
+  },
+}
+```
 
 ## 🏗️ Building for Production
 
