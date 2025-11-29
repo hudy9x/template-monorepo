@@ -46,6 +46,62 @@ cd template-monorepo
 pnpm install
 ```
 
+### Environment Variables Setup
+
+This monorepo uses **individual `.env` files** for each app and package that requires environment-specific configuration. **Do not create a `.env` file in the root directory.**
+
+#### Creating `.env` Files
+
+Each application and package should have its own `.env` file:
+
+```
+template-monorepo/
+├── apps/
+│   ├── api/.env          # API server environment variables
+│   └── web/.env          # Web app environment variables
+└── packages/
+    └── database/.env     # Database connection and Prisma configuration
+```
+
+#### Example Configurations
+
+**`apps/api/.env`:**
+
+```env
+# API Server Configuration
+PORT=3005
+NODE_ENV=development
+
+# Database (if needed directly in API)
+DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
+```
+
+**`apps/web/.env`:**
+
+```env
+# Vite requires VITE_ prefix for client-side variables
+VITE_API_URL=http://localhost:3005
+VITE_APP_NAME="My App"
+```
+
+**`packages/database/.env`:**
+
+```env
+# Prisma Database Connection
+DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
+
+# Prisma Accelerate (if using)
+# DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=your_api_key"
+```
+
+> [!IMPORTANT]
+> - Each `.env` file should be added to `.gitignore` to prevent committing sensitive data
+> - Create `.env.example` files in each directory as templates for other developers
+> - For Vite (web app), only variables prefixed with `VITE_` are exposed to the client
+
+> [!TIP]
+> After creating your `.env` files, restart your development servers to ensure the new environment variables are loaded.
+
 ## 🏃 Running the Applications
 
 ### Start API Server
