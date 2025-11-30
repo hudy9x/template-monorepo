@@ -7,8 +7,9 @@ import { getAllTests, createTest } from '@local/database'
 const app = new Hono()
 
 // Enable CORS for web app
+const origins = process.env.ORIGINS || 'http://localhost:2001'
 app.use('/*', cors({
-  origin: 'http://localhost:3000',
+  origin: origins.split(','),
   credentials: true,
 }))
 
@@ -17,7 +18,7 @@ app.get('/', (c) => {
 })
 
 // Get all tests
-app.get('/tests', async (c) => {
+app.get('/api/tests', async (c) => {
   try {
     const tests = await getAllTests()
     return c.json(tests)
@@ -28,7 +29,7 @@ app.get('/tests', async (c) => {
 })
 
 // Create a new test
-app.post('/tests', async (c) => {
+app.post('/api/tests', async (c) => {
   try {
     const body = await c.req.json()
     const test = await createTest(body.name, body.description)
