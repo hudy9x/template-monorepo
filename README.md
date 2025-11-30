@@ -322,95 +322,50 @@ This monorepo uses **Readable Streams** for streaming data from backend to front
 
 📖 **[Read the full Streaming Guide →](./docs/streaming-with-readable-streams.md)**
 
-## 🎨 UI Components with shadcn/ui
+## 🎨 UI Components with Tailwind CSS & shadcn/ui
 
-This monorepo recommends using [shadcn/ui](https://ui.shadcn.com/) for building beautiful, accessible UI components.
-
-### What is shadcn/ui?
-
-shadcn/ui is **not a component library**. It's a collection of re-usable components that you can copy and paste into your apps. Built on top of:
-- **Radix UI** - Unstyled, accessible components
-- **Tailwind CSS** - Utility-first CSS framework
-
-### Installation
+This template comes pre-configured with:
+- **[Tailwind CSS v4](https://tailwindcss.com/)** - Utility-first CSS framework with zero-config setup
+- **[shadcn/ui](https://ui.shadcn.com/)** - Beautiful, accessible components built on Radix UI
 
 > [!NOTE]
-> This template uses **Tailwind CSS v4**, which has a simpler setup process compared to v3. No config file is needed!
+> Tailwind CSS v4 is already installed and configured. No config file needed - just use utility classes!
 
-**1. Install Tailwind CSS**
+### Using Tailwind CSS
 
-```bash
-cd apps/web
-pnpm install -D tailwindcss
-```
-
-**2. Import Tailwind in your CSS**
-
-Add the import to your `./src/index.css` file:
-
-```css
-@import "tailwindcss";
-```
-
-**3. Start your build process**
-
-```bash
-pnpm dev
-```
-
-**4. Start using Tailwind in your project**
+Simply use Tailwind utility classes in your components:
 
 ```tsx
-export default function App() {
+export default function Example() {
   return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-4xl font-bold text-blue-600">
+        Hello Tailwind!
+      </h1>
+    </div>
   )
 }
 ```
 
-> [!TIP]
-> Tailwind CSS v4 automatically detects your template files and doesn't require a config file. If you need customization, you can use CSS variables in your stylesheet.
+### Adding shadcn/ui Components
 
-**4. Initialize shadcn/ui**
-
-```bash
-cd apps/web
-pnpm dlx shadcn@latest init
-```
-
-Follow the prompts:
-- **TypeScript**: Yes
-- **Style**: Default (or your preference)
-- **Base color**: Slate (or your preference)
-- **CSS variables**: Yes
-- **Components location**: `./src/components`
-- **Utils location**: `./src/lib/utils`
-
-### Adding Components
-
-Add components as needed:
+Add components as needed using the CLI:
 
 ```bash
 cd apps/web
 
-# Add a button component
+# Add a single component
 pnpm dlx shadcn@latest add button
-
-# Add a card component
-pnpm dlx shadcn@latest add card
-
-# Add a form component
-pnpm dlx shadcn@latest add form
 
 # Add multiple components at once
 pnpm dlx shadcn@latest add button card dialog dropdown-menu
 ```
 
-### Using Components
+### Using shadcn/ui Components
 
-```typescript
+Import and use components with the `@/` path alias:
+
+```tsx
 // apps/web/src/pages/Example.tsx
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -432,38 +387,6 @@ export default function Example() {
     </div>
   );
 }
-```
-
-### Path Alias Configuration
-
-Ensure `@` alias is configured in `apps/web/tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
-```
-
-And in `apps/web/vite.config.ts`:
-
-```typescript
-import path from "path";
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-});
 ```
 
 > [!TIP]
