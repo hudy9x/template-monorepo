@@ -89,7 +89,7 @@ template-monorepo/
 
 ```env
 # API Server Configuration
-PORT=3005
+PORT=4001
 NODE_ENV=development
 
 # Database (if needed directly in API)
@@ -99,8 +99,11 @@ DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
 **`apps/web/.env`:**
 
 ```env
+# Web Server Configuration
+PORT=2001
+
 # Vite requires VITE_ prefix for client-side variables
-VITE_API_URL=http://localhost:3005
+VITE_API_URL=http://localhost:4001
 VITE_APP_NAME="My App"
 ```
 
@@ -130,7 +133,7 @@ DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
 pnpm dev:api
 ```
 
-The API server will start on `http://localhost:3005`.
+The API server will start on `http://localhost:4001`.
 
 ### Start Web Application
 
@@ -138,7 +141,7 @@ The API server will start on `http://localhost:3005`.
 pnpm dev:web
 ```
 
-The web application will start on `http://localhost:3000`.
+The web application will start on `http://localhost:2001`.
 
 ### Start Both Applications
 
@@ -151,8 +154,8 @@ pnpm dev:all
 ### Port Configuration
 
 The default ports are:
-- **API Server**: `3005` (configured in `apps/api/src/index.ts`)
-- **Web Application**: `3000` (configured in `apps/web/vite.config.ts`)
+- **API Server**: `4001` (configured in `apps/api/src/index.ts` or via `PORT` env variable)
+- **Web Application**: `2001` (configured in `apps/web/vite.config.ts` or via `PORT` env variable)
 
 > [!NOTE]
 > If you change the API port, make sure to update the proxy target in `vite.config.ts` and the CORS origin in `apps/api/src/index.ts`.
@@ -161,7 +164,7 @@ The default ports are:
 
 The web application uses Vite's proxy to forward `/api/*` requests to the backend server, avoiding CORS issues during development.
 
-**Example:** Request to `/api/tests` → forwarded to → `http://localhost:3005/tests`
+**Example:** Request to `/api/tests` → forwarded to → `http://localhost:4001/api/tests`
 
 **Configuration in `apps/web/vite.config.ts`:**
 
@@ -169,18 +172,49 @@ The web application uses Vite's proxy to forward `/api/*` requests to the backen
 server: {
   proxy: {
     '/api': {
-      target: 'http://localhost:3005',
+      target: 'http://localhost:4001',
       changeOrigin: true,
-      rewrite: (path) => path.replace(/^\/api/, ''),
     },
   },
 }
 ```
 
-**Usage in frontend:**
+> [!IMPORTANT]
+> The `/api` prefix is **preserved** when forwarding to the backend. This means:
+> - Frontend calls: `/api/tests`
+> - Backend receives: `/api/tests`
+> - Backend routes must include the `/api` prefix (e.g., `app.get('/api/tests', ...)`)
+
+
+
+### Calling the API from Web App
+
+Here's an example of how to call the API from your React components using the fetch API:
+
 ```typescript
-const response = await fetch('/api/tests');
+// apps/web/src/pages/CreateTest.tsx
+const response = await fetch('/api/tests', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ name, description }),
+});
+
+if (!response.ok) {
+  throw new Error('Failed to create test');
+}
+
+const data = await response.json();
+
 ```
+
+
+> [!TIP]
+> - All API endpoints in the backend should include the `/api` prefix (e.g., `app.get('/api/users', ...)`)
+> - When calling from the frontend, use the same path: `fetch('/api/users')`
+> - The proxy forwards requests to the backend server while preserving the `/api` prefix
+> - Add proper error handling and loading states for better UX
 
 ## 🏗️ Building for Production
 
@@ -300,42 +334,44 @@ shadcn/ui is **not a component library**. It's a collection of re-usable compone
 
 ### Installation
 
-**1. Install Tailwind CSS** (if not already installed)
+> [!NOTE]
+> This template uses **Tailwind CSS v4**, which has a simpler setup process compared to v3. No config file is needed!
+
+**1. Install Tailwind CSS**
 
 ```bash
 cd apps/web
-pnpm add -D tailwindcss postcss autoprefixer
-pnpm dlx tailwindcss init -p
+pnpm install -D tailwindcss
 ```
 
-**2. Configure Tailwind**
+**2. Import Tailwind in your CSS**
 
-Edit `apps/web/tailwind.config.js`:
+Add the import to your `./src/index.css` file:
 
-```javascript
-/** @type {import('tailwindcss').Config} */
-export default {
-  darkMode: ["class"],
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
+```css
+@import "tailwindcss";
+```
+
+**3. Start your build process**
+
+```bash
+pnpm dev
+```
+
+**4. Start using Tailwind in your project**
+
+```tsx
+export default function App() {
+  return (
+    <h1 className="text-3xl font-bold underline">
+      Hello world!
+    </h1>
+  )
 }
 ```
 
-**3. Add Tailwind directives**
-
-Edit `apps/web/src/index.css`:
-
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
+> [!TIP]
+> Tailwind CSS v4 automatically detects your template files and doesn't require a config file. If you need customization, you can use CSS variables in your stylesheet.
 
 **4. Initialize shadcn/ui**
 
