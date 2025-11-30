@@ -10,6 +10,8 @@
 - Adding new apps to workspace: @docs/add-app-to-apps-folder.md
 - Adding new packages to workspace: @docs/add-package-to-pacakges-folder.md
 - Adding React Router to React app: @docs/how-to-add-router-to-react.md
+- Authentication with Better Auth: @docs/authentication-with-better-auth.md
+- Streaming with Readable Streams: @docs/streaming-with-readable-streams.md
 
 **When to Read Documentation**
 - Read @docs/add-app-to-apps-folder.md when:
@@ -27,6 +29,24 @@
   - User wants to implement React Router
   - User needs guidance on React Router data mode setup
 
+- Read @docs/authentication-with-better-auth.md when:
+  - User asks to implement authentication
+  - User wants to add login/signup functionality
+  - User needs guidance on Better Auth with bearer tokens
+  - User wants to create protected routes
+
+- Read @docs/streaming-with-readable-streams.md when:
+  - User asks to implement streaming (AI responses, logs, etc.)
+  - User wants to stream data from backend to frontend
+  - User needs guidance on Readable Streams vs WebSockets
+  - User wants to implement Server-Sent Events (SSE)
+
+**OpenCode Agent Configuration**
+- This project has specialized agents configured in `.opencode/` folder
+- Primary agent: `farmer` - Coordinates full-stack development
+- Subagents: `@api` (backend), `@web` (frontend), `@database` (Prisma)
+- See `.opencode/README.md` for agent usage and customization
+
 **Build / Dev**
 - Root dev all: `pnpm run dev:all`
 - Start web dev: `pnpm --filter web dev` or `pnpm run dev:web`
@@ -36,9 +56,9 @@
 - Prisma DB tasks: `pnpm --filter @local/database run db:migrate` etc.
 
 **Port Configuration**
-- API server runs on port `3005` (configured in `apps/api/src/index.ts`)
-- Web dev server runs on port `3000` (configured in `apps/web/vite.config.ts`)
-- Web app proxies `/api/*` requests to `http://localhost:3005`
+- API server runs on port `4001` (configured in `apps/api/src/index.ts`)
+- Web dev server runs on port `2001` (configured in `apps/web/vite.config.ts`)
+- Web app proxies `/api/*` requests to `http://localhost:4001`
   - Proxy config in `apps/web/vite.config.ts` under `server.proxy`
   - Requests to `/api/tests` are rewritten to `/tests` and forwarded to API server
   - The `rewrite` function removes the `/api` prefix before forwarding

@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
@@ -39,7 +40,7 @@ app.post('/tests', async (c) => {
 
 serve({
   fetch: app.fetch,
-  port: 3005
+  port: Number(process.env.PORT) || 4001
 }, (info) => {
   console.log(`Server is running on http://localhost:${info.port}`)
 })

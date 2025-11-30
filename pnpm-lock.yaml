@@ -16,6 +16,9 @@ importers:
       '@local/database':
         specifier: workspace:*
         version: link:../../packages/database
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       hono:
         specifier: ^4.10.6
         version: 4.10.6

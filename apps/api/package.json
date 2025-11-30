@@ -9,6 +9,7 @@
   "dependencies": {
     "@hono/node-server": "^1.19.6",
     "@local/database": "workspace:*",
+    "dotenv": "^17.2.3",
     "hono": "^4.10.6"
   },
   "devDependencies": {
