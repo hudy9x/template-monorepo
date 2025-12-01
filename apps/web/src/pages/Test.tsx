@@ -1,5 +1,23 @@
 import { useLoaderData, useFetcher } from 'react-router';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 
 interface Test {
     id: number;
@@ -32,127 +50,102 @@ export default function Test() {
     const isSubmitting = fetcher.state !== 'idle';
 
     return (
-        <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-            <h1>Test Data</h1>
+        <div className="container mx-auto py-8 px-4 max-w-6xl">
+            <h1 className="text-4xl font-bold mb-8">Test Data</h1>
 
-            {/* Form to add new test */}
-            <div style={{
-                marginBottom: '2rem',
-                padding: '1.5rem',
-                border: '1px solid #646cff',
-                borderRadius: '8px',
-                backgroundColor: '#1a1a1a'
-            }}>
-                <h2 style={{ marginTop: 0 }}>Add New Test</h2>
-                <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1rem' }}>
-                        <label htmlFor="name" style={{ display: 'block', marginBottom: '0.5rem' }}>
-                            Name <span style={{ color: 'red' }}>*</span>
-                        </label>
-                        <input
-                            id="name"
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                            disabled={isSubmitting}
-                            style={{
-                                width: '100%',
-                                padding: '0.5rem',
-                                fontSize: '1rem',
-                                borderRadius: '4px',
-                                border: '1px solid #646cff',
-                                backgroundColor: '#242424',
-                                color: 'white',
-                            }}
-                        />
-                    </div>
+            {/* Form Card */}
+            <Card className="mb-8">
+                <CardHeader>
+                    <CardTitle>Add New Test</CardTitle>
+                    <CardDescription>
+                        Create a new test entry with a name and optional description
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <label htmlFor="name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Name <span className="text-destructive">*</span>
+                            </label>
+                            <Input
+                                id="name"
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                                disabled={isSubmitting}
+                                placeholder="Enter test name"
+                            />
+                        </div>
 
-                    <div style={{ marginBottom: '1rem' }}>
-                        <label htmlFor="description" style={{ display: 'block', marginBottom: '0.5rem' }}>
-                            Description
-                        </label>
-                        <textarea
-                            id="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            disabled={isSubmitting}
-                            rows={3}
-                            style={{
-                                width: '100%',
-                                padding: '0.5rem',
-                                fontSize: '1rem',
-                                borderRadius: '4px',
-                                border: '1px solid #646cff',
-                                backgroundColor: '#242424',
-                                color: 'white',
-                                resize: 'vertical',
-                            }}
-                        />
-                    </div>
+                        <div className="space-y-2">
+                            <label htmlFor="description" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Description
+                            </label>
+                            <Textarea
+                                id="description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                disabled={isSubmitting}
+                                rows={3}
+                                placeholder="Enter optional description"
+                            />
+                        </div>
 
-                    <button
-                        type="submit"
-                        disabled={isSubmitting || !name.trim()}
-                        style={{
-                            padding: '0.75rem 1.5rem',
-                            fontSize: '1rem',
-                            backgroundColor: isSubmitting ? '#555' : '#646cff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                        }}
-                    >
-                        {isSubmitting ? 'Adding...' : 'Add Test'}
-                    </button>
-                </form>
-            </div>
+                        <Button
+                            type="submit"
+                            disabled={isSubmitting || !name.trim()}
+                            className="w-full sm:w-auto"
+                        >
+                            {isSubmitting ? 'Adding...' : 'Add Test'}
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
 
-            {/* Table to display tests */}
-            <div style={{ overflowX: 'auto' }}>
-                <h2>All Tests ({tests.length})</h2>
-                {tests.length === 0 ? (
-                    <p style={{ color: '#888' }}>No tests found. Add one using the form above!</p>
-                ) : (
-                    <table style={{
-                        width: '100%',
-                        borderCollapse: 'collapse',
-                        marginTop: '1rem',
-                    }}>
-                        <thead>
-                            <tr style={{ backgroundColor: '#1a1a1a', borderBottom: '2px solid #646cff' }}>
-                                <th style={{ padding: '1rem', textAlign: 'left' }}>ID</th>
-                                <th style={{ padding: '1rem', textAlign: 'left' }}>Name</th>
-                                <th style={{ padding: '1rem', textAlign: 'left' }}>Description</th>
-                                <th style={{ padding: '1rem', textAlign: 'left' }}>Created At</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {tests.map((test) => (
-                                <tr
-                                    key={test.id}
-                                    style={{
-                                        borderBottom: '1px solid #333',
-                                        transition: 'background-color 0.2s',
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1a1a1a'}
-                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                                >
-                                    <td style={{ padding: '1rem' }}>{test.id}</td>
-                                    <td style={{ padding: '1rem', fontWeight: 'bold' }}>{test.name}</td>
-                                    <td style={{ padding: '1rem', color: '#aaa' }}>
-                                        {test.description || <em style={{ color: '#666' }}>No description</em>}
-                                    </td>
-                                    <td style={{ padding: '1rem', color: '#aaa' }}>
-                                        {new Date(test.createdAt).toLocaleString()}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
-            </div>
+            {/* Tests Table Card */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>All Tests ({tests.length})</CardTitle>
+                    <CardDescription>
+                        View all test entries in the database
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {tests.length === 0 ? (
+                        <p className="text-muted-foreground text-center py-8">
+                            No tests found. Add one using the form above!
+                        </p>
+                    ) : (
+                        <div className="rounded-md border">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-[80px]">ID</TableHead>
+                                        <TableHead>Name</TableHead>
+                                        <TableHead>Description</TableHead>
+                                        <TableHead className="w-[200px]">Created At</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {tests.map((test) => (
+                                        <TableRow key={test.id}>
+                                            <TableCell className="font-medium">{test.id}</TableCell>
+                                            <TableCell className="font-semibold">{test.name}</TableCell>
+                                            <TableCell className="text-muted-foreground">
+                                                {test.description || <em className="text-muted-foreground/60">No description</em>}
+                                            </TableCell>
+                                            <TableCell className="text-muted-foreground">
+                                                {new Date(test.createdAt).toLocaleString()}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
         </div>
     );
 }

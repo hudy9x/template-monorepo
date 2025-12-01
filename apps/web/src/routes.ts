@@ -1,7 +1,6 @@
 import { createBrowserRouter, redirect, type ActionFunctionArgs } from 'react-router';
 import Layout from './pages/Layout.tsx';
 import Home from './pages/Home.tsx';
-import About from './pages/About.tsx';
 import Test from './pages/Test.tsx';
 import NotFound from './pages/NotFound.tsx';
 import ErrorBoundary from './pages/ErrorBoundary.tsx';
@@ -15,10 +14,6 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 Component: Home,
-            },
-            {
-                path: 'about',
-                Component: About,
             },
             {
                 path: 'test',
