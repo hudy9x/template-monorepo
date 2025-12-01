@@ -1,0 +1,27 @@
+{
+    "name": "@local/api-client",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "API client for making HTTP requests",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "clean": "rm -rf dist"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^24.10.1",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {}
+}

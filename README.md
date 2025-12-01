@@ -392,6 +392,211 @@ export default function Example() {
 > [!TIP]
 > Browse all available components at [ui.shadcn.com/docs/components](https://ui.shadcn.com/docs/components)
 
+## 🔌 API Client Integration
+
+This monorepo includes a fully-typed API client package (`@local/api-client`) for making HTTP requests from the web application.
+
+### Package Structure
+
+The API client currently includes two modules:
+- **`auth`** - Authentication endpoints (login, register, logout, etc.)
+- **`test`** - Test data endpoints (get all tests, create test)
+
+### Installation
+
+The `@local/api-client` package is already added to the web app's dependencies. After running `pnpm install`, it will be available for use.
+
+### Configuration
+
+The API client is configured in `apps/web/src/lib/api-client.ts` with:
+- Base URL from environment variables (`VITE_API_URL`)
+- Request interceptor for adding authentication tokens
+- Response interceptor for logging
+- Error interceptor for centralized error handling
+
+**Example configuration:**
+
+```typescript
+import { createApiClient } from '@local/api-client';
+
+export const apiClient = createApiClient({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4001/api',
+});
+
+// Add request interceptor to include auth token
+apiClient.interceptors.addRequestInterceptor((config) => {
+  const token = localStorage.getItem('authToken');
+  if (token) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return config;
+});
+```
+
+### Usage Examples
+
+#### Basic Import
+
+```typescript
+import apiClient from '@/lib/api-client';
+```
+
+#### Authentication Module
+
+```typescript
+// Login
+const response = await apiClient.auth.login({
+  email: 'user@example.com',
+  password: 'password123',
+});
+
+// Save token
+localStorage.setItem('authToken', response.data.token);
+
+// Register
+await apiClient.auth.register({
+  email: 'new@example.com',
+  password: 'password123',
+  name: 'New User',
+});
+
+// Get current user
+const currentUser = await apiClient.auth.getCurrentUser();
+
+// Logout
+await apiClient.auth.logout();
+```
+
+#### Test Module
+
+```typescript
+// Get all tests
+const testsResponse = await apiClient.test.getAll();
+console.log(testsResponse.data); // Array of Test objects
+
+// Create a new test
+const newTest = await apiClient.test.create({
+  name: 'My Test',
+  description: 'Optional description',
+});
+console.log(newTest.data); // Created Test object
+```
+
+#### Error Handling
+
+```typescript
+import { ApiClientError } from '@local/api-client';
+
+try {
+  await apiClient.test.getAll();
+} catch (error) {
+  if (error instanceof ApiClientError) {
+    console.log(`API Error: ${error.message} (${error.status})`);
+  }
+}
+```
+
+#### Using in React Components
+
+```typescript
+import { useState, useEffect } from 'react';
+import apiClient from '@/lib/api-client';
+import type { Test } from '@local/api-client';
+
+export default function TestList() {
+  const [tests, setTests] = useState<Test[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchTests() {
+      try {
+        const response = await apiClient.test.getAll();
+        setTests(response.data);
+      } catch (error) {
+        console.error('Failed to fetch tests:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTests();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
+  return (
+    <ul>
+      {tests.map(test => (
+        <li key={test.id}>{test.name}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+### Environment Variables
+
+Add to your `apps/web/.env` file:
+
+```env
+VITE_API_URL=http://localhost:4001/api
+```
+
+### TypeScript Support
+
+The API client is fully typed. Import types as needed:
+
+```typescript
+import type { Test, CreateTestRequest, LoginResponse, ApiResponse } from '@local/api-client';
+```
+
+### Adding Custom Interceptors
+
+You can add custom interceptors in `apps/web/src/lib/api-client.ts`:
+
+```typescript
+// Custom request interceptor
+apiClient.interceptors.addRequestInterceptor((config) => {
+  // Modify request config
+  return config;
+});
+
+// Custom response interceptor
+apiClient.interceptors.addResponseInterceptor((response) => {
+  // Handle response
+  return response;
+});
+
+// Custom error interceptor
+apiClient.interceptors.addErrorInterceptor((error) => {
+  // Handle errors
+  return error;
+});
+```
+
+### Adding New Modules
+
+To add a new module to the API client:
+
+1. Create a new directory in `packages/api-client/src/modules/[module-name]/`
+2. Add `[module-name].types.ts` for TypeScript interfaces
+3. Add `[module-name].api.ts` with the API class
+4. Export the module in `packages/api-client/src/index.ts`
+5. Add the module to the `ApiClient` class
+
+**Example structure:**
+```
+packages/api-client/src/modules/
+├── auth/
+│   ├── auth.types.ts
+│   └── auth.api.ts
+└── test/
+    ├── test.types.ts
+    └── test.api.ts
+```
+
 ## 🔐 Authentication with Better Auth
 
 This monorepo uses [Better Auth](https://www.better-auth.com/) with **bearer token authentication** for API security. Bearer tokens are stateless, mobile-friendly, and perfect for API-first applications.

@@ -35,6 +35,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@local/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.6)(react@19.2.0)
@@ -111,6 +114,15 @@ importers:
       vite:
         specifier: ^7.2.4
         version: 7.2.4(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.6)
+
+  packages/api-client:
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
   packages/database:
     dependencies:
