@@ -19,19 +19,32 @@ export default function Home() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 mb-8">
-                <Card>
+                <Card className="md:col-span-2">
                     <CardHeader>
-                        <CardTitle>🚀 Quick Start</CardTitle>
-                        <CardDescription>Get up and running in minutes</CardDescription>
+                        <CardTitle>🚀 Setup Guide</CardTitle>
+                        <CardDescription>Follow these steps to initialize the project</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-2">
+                    <CardContent className="space-y-4">
                         <div>
-                            <code className="text-sm bg-muted px-2 py-1 rounded">pnpm install</code>
-                            <p className="text-sm text-muted-foreground mt-1">Install dependencies</p>
+                            <h3 className="font-semibold text-sm">1. Environment Setup</h3>
+                            <p className="text-sm text-muted-foreground mt-1">Run the setup script to generate `.env` files, then configure your <code className="bg-muted px-1 rounded">DATABASE_URL</code>:</p>
+                            <code className="text-sm bg-muted px-2 py-1 rounded block mt-1 w-fit">pnpm run setup</code>
                         </div>
                         <div>
-                            <code className="text-sm bg-muted px-2 py-1 rounded">pnpm dev:all</code>
-                            <p className="text-sm text-muted-foreground mt-1">Start API and web app</p>
+                            <h3 className="font-semibold text-sm">2. Database Setup (<a href="https://console.prisma.io" target="_blank" rel="noreferrer" className="text-primary hover:underline">console.prisma.io</a>)</h3>
+                            <div className="bg-muted p-2 rounded mt-1 space-y-1 w-fit">
+                                <code className="text-sm block">pnpm --filter @local/database run db:generate</code>
+                                <code className="text-sm block">pnpm --filter @local/database run db:migrate</code>
+                                <code className="text-sm block text-muted-foreground"># optional: pnpm --filter @local/database run db:seed</code>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-sm">3. Start Development</h3>
+                            <p className="text-sm text-muted-foreground mt-1">Run these commands in separate terminal tabs:</p>
+                            <div className="bg-muted p-2 rounded mt-1 space-y-1 w-fit">
+                                <code className="text-sm block">pnpm dev:api</code>
+                                <code className="text-sm block">pnpm dev:web</code>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
